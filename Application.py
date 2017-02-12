@@ -10,10 +10,11 @@ class Application(Frame):
     def __init__(self, master=None):  # this method creates the class object.
         Frame.__init__(self, master)
 
-        self.createWidgets()
-        self.pack()
+       # self.createButtons()
+        # self.pack()
+        self.chooseFile()
 
-    def createWidgets(self):
+    def createButtons(self):
         self.QUIT = Button(self)
         self.QUIT["text"] = "QUIT"
         self.QUIT["fg"] = "red"
@@ -29,18 +30,36 @@ class Application(Frame):
     def chooseFile(self):
         #fileName = tkFileDialog.askopenfilename()
         dir_name = "/Users/JoeWood/dev/api-laravel-mobileapi/app/Models/"
+        fileList = os.listdir(dir_name)
+        #print fileList
         os.chdir(dir_name)
-        for file in glob.glob("*"):
-            print(file)
+        print glob.glob(dir_name+"/*/"+"*.php")
 
 
-    def say_hi(self):
-        print "hi there, everyone!"
+        #for file in glob.glob("*"):
+            #print(file)
+
 
 
 
 root = Tk()
 # Code to add widgets will go here...
-app = Application(master=root)
-app.mainloop()
+# app = Application(master=root)
+# app.mainloop()
+
+
+dir_name = "/Users/JoeWood/dev/api-laravel-mobileapi/app/Models/"
+fileList = os.listdir(dir_name)
+# print fileList
+traversed_files = {}
+for dirName, subdirList, fileList in os.walk(dir_name):
+    fileArray = []
+    for fname in fileList:
+        fileArray.append(fname)
+    traversed_files[dirName] = fileArray
+
+
+#print traversed_files
+
+
 root.destroy()
