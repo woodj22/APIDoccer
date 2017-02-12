@@ -1,5 +1,6 @@
 
 from Item import Item
+from PHPParser import PHPParser
 from Tkinter import *
 import tkFileDialog
 import os
@@ -57,9 +58,6 @@ for dirName, subdirList, fileList in os.walk(dir_name):
     for fname in fileList:
         fileArray.append(fname)
     traversed_files[dirName] = fileArray
-
-
-#print traversed_files
-
+phpParser = PHPParser(traversed_files)
 
 root.destroy()
