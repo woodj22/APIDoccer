@@ -8,12 +8,13 @@ class PHPParser:
                     lines = f.readlines()
                 content = [x.strip() for x in lines]
                 content = filter(None, content)
-                print content
-                for lines in content:
-                    print lines
+                self.findProtectedFields(content)
 
-
-
+    def findProtectedFields(self, content):
+        def findProtection(string):
+            return "protected" in string
+        filteredContent = filter(findProtection, content)
+        print filteredContent
 
 
 
