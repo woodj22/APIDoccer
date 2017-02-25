@@ -59,5 +59,5 @@ for dirName, subdirList, fileList in os.walk(dir_name):
         fileArray.append(fname)
     traversed_files[dirName] = fileArray
 phpParser = PHPParser(traversed_files)
-
+print phpParser.findProtectedFields()
 root.destroy()
