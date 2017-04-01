@@ -1,9 +1,11 @@
 
 
 class PHPParser:
+
     def __init__(self, traversed_files):
-
-
+        global content
+        content = self.getContentFromFiles(traversed_files)
+    def getContentFromFiles(self, traversed_files):
         for files in traversed_files:
             for models in traversed_files[files]:
                 with open(files+"/"+models) as f:
@@ -15,7 +17,10 @@ class PHPParser:
                     print(lines)
 
 
+                return content
 
+    def findProtectedFields(self):
+        return filter(lambda string: "protected" in string, content)
 
 
 
