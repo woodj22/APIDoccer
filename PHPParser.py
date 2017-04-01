@@ -17,9 +17,7 @@ class PHPParser:
                 return content
 
     def findProtectedFields(self):
-        def findProtection(string):
-            return "protected" in string
-        return filter(findProtection, content)
+        return filter(lambda(string): "protected" in string, content)
 
 
 
