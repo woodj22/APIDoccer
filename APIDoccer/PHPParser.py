@@ -10,12 +10,9 @@ class PHPParser:
             for models in traversed_files[files]:
                 with open(files+"/"+models) as f:
                     lines = f.readlines()
+                ##strip white space out
                 content = [x.strip() for x in lines]
-                content = filter(None, content)
-
-                for lines in content:
-                    print(lines)
-
+                content = list(filter(None, content))
 
                 return content
 

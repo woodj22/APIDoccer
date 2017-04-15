@@ -1,6 +1,6 @@
 import os
-from Tkinter import *
-
+from tkinter import *
+from APIDoccer.PHPParser import *
 root = Tk()
 # Code to add widgets will go here...
 # app = Application(master=root)
@@ -12,12 +12,8 @@ fileList = os.listdir(dir_name)
 # print fileList
 traversed_files = {}
 for dirName, subdirList, fileList in os.walk(dir_name):
-    fileArray = []
-    for fname in fileList:
-        fileArray.append(fname)
-    traversed_files[dirName] = fileArray
+    traversed_files[dirName] = fileList
 
-print(help("modules"))
-#phpParser = PHPParser(traversed_files)
-
+phpParser = PHPParser(traversed_files)
+sys.exit(list(phpParser.findProtectedFields()));
 root.destroy()
