@@ -5,3 +5,4 @@ if __name__ == "__main__":
 
     model_name = "Person"
     swagger = Swagger(path, model_name).create_swagger_definition()
+    print(swagger)
