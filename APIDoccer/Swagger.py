@@ -1,4 +1,6 @@
 from string import Template
+from pkg_resources import resource_string
+
 
 class Swagger:
     def __init__(self, path, model_name):
@@ -25,16 +27,17 @@ class Swagger:
         return self.get_input_names(content[start_point:end_point])
 
     def create_swagger_definition(self):
-        filein = open('APIDoccer/swagger_definition.txt')
-        src = Template(filein.read())
+        foo_config = resource_string(__name__, 'data/swagger_definition.txt')
+       # filein = open('APIDoccer/swagger_definition.txt')
+        src = Template(foo_config)
         properties = self.map_model_transformer()
-        details = {'modelName': self.model_name, 'modelPluralName': 'people', 'properties': properties}
-        exit(details)
-        src.substitute(details)
+        details = {'modelName': self.model_name, 'modelPluralName': 'people', 'properties': ''.join(properties)}
+
+        return src.substitute(details)
 
     def get_input_names(self, transformer_array):
         return list(map(self.make_property, transformer_array))
 
     @staticmethod
     def make_property(name):
-        " *     @SWG\Property(property = " + name.split("=>")[0]+ ", type = 'string', default = ''),"
+       return  " *     @SWG\Property(property = " + name.split("=>")[0]+ ", type = 'string', default = ''), \n"

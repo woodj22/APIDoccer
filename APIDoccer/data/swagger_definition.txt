@@ -4,6 +4,7 @@
 /**
  * @SWG\Definition(
  *     definition="$modelName:properties",
+        $properties
  *)
  * @SWG\Definition(
  *     definition="$modelName:id",
