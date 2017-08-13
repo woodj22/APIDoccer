@@ -1,0 +1,31 @@
+/*
+ *      SWAGGER DEFINITIONS    -----------------------------------------------------
+ */
+/**
+ * @SWG\Definition(
+ *     definition="$modelName:properties",
+ *)
+ * @SWG\Definition(
+ *     definition="$modelName:id",
+ *     @SWG\Property( property = "id", type = "integer", default  = "1"),
+ *     @SWG\Property(property = "updatedAt",type = "timestamp",default = 1484928295),
+ *     @SWG\Property(property = "createdAt", type = "timestamp",default = 1484928295),
+ *
+ *)
+ *
+ * @SWG\Definition(
+ *     definition   = "$modelName",
+ *     type         = "object",
+ *     allOf        = {
+ *         @SWG\Schema(ref="#/definitions/$modelName:id"),
+ *         @SWG\Schema(ref="#/definitions/$modelName:properties"),
+ *     },
+ *
+ * )
+ *
+ *@SWG\Definition(
+ *     definition   = "$modelPluralName",
+ *     type         = "array",
+ *     @SWG\Items(ref="#/definitions/$modelName")
+ * )
+ */
