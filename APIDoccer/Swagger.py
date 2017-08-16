@@ -54,22 +54,13 @@ class Swagger:
 
     def map_to_casts(self, transformer_map, cast_map):
 
-        d = [[key, value] if key in transformer_map else [key, 'string'] for (key, value) in cast_map]
-        exit(d)
-        for key, value in cast_map:
-            if key in transformer_map:
+        return [[key, cast_map[key]] if key in cast_map.keys() else [key, 'string'] for key in transformer_map]
 
-                transformer_map[:] = [key, value]
-            else:
-                transformer_map[:] = 'string'
-
-        exit(transformer_map)
-        return transformer_map
 
     @staticmethod
     def split_transform_array(array, delimiter=" => ", keep_values=True):
         if keep_values:
-            return [key.split(delimiter) for key in array]
+            return dict(key.split(delimiter) for key in array)
         else:
             return [key.split(delimiter)[0] for key in array]
 
