@@ -46,7 +46,7 @@ class Swagger:
 
     def create_swagger_properties(self, casted_attributes):
 
-        return [self.make_swagger_property(attribute) for attribute in casted_attributes]
+        return [self.make_swagger_property(attribute, cast) for [attribute, cast] in casted_attributes]
 
     @staticmethod
     def split_transform_array(array, delimiter=" => ", keep_values=True):
@@ -56,8 +56,8 @@ class Swagger:
             return [key.split(delimiter)[0] for key in array]
 
     @staticmethod
-    def make_swagger_property(attribute):
-        return " *     @SWG\Property(property = " + attribute[0] + ",          type =" + attribute[1] + ", default = ''), \n"
+    def make_swagger_property(attribute, cast):
+        return " *     @SWG\Property(property = " + attribute + ",          type =" + cast + ", default = ''), \n"
 
     def make_swagger_include_property(self, reference_name):
         return " *     @SWG\Property(property = " + reference_name + ", type = 'array',@SWG\Items(ref='#/definitions/"+reference_name+"'),),\n"
