@@ -13,7 +13,7 @@ class Swagger:
             lines = f.readlines()
         return [x.strip().strip(',') for x in lines]
 
-    def map_model_attributes(self):
+    def map_casts_to_model_attributes(self):
 
         parser = PHPTransformerParser()
         map_array = parser.get_transformer_array(self.content, "public $map", False)
@@ -21,38 +21,24 @@ class Swagger:
 
         return parser.map_casts_to_values(map_array, casts_array)
 
-    def get_transformer_array(self, transformer, array_name):
-        found_start = False
-        start_point = 0
-        end_point = 0
-
-        for index, line in enumerate(transformer):
-            if array_name in line:
-                start_point = index + 1
-                found_start = True
-            if found_start and "];" in line:
-                end_point = index
-                break
-
-        return transformer[start_point:end_point]
 
     def create_swagger_definition(self):
         swagger_template = resource_string(__name__, 'data/swagger_definition.txt')
         src = Template(swagger_template)
-        properties = self.map_model_attributes()
+        casted_attributes = self.map_casts_to_model_attributes()
+        swagger_properties = self.map_swagger_properties(casted_attributes)
+
         details = {
             'modelName': self.model_name,
             'modelPluralName': 'people',
-            'properties': ''.join(properties)
+            'properties': ''.join(swagger_properties)
         }
 
         return src.substitute(details)
-    # (property name => type)
-    def map_to_swagger_property(self, transformer_array):
 
-        return [self.make_property(name) for name in transformer_array]
+    def map_swagger_properties(self, casted_attributes):
 
-
+        return [self.make_swagger_property(attribute) for attribute in casted_attributes]
 
     @staticmethod
     def split_transform_array(array, delimiter=" => ", keep_values=True):
@@ -64,5 +50,5 @@ class Swagger:
 
 
     @staticmethod
-    def make_property(name):
-        return " *     @SWG\Property(property = " + name.split("=>")[0]+ ",          type = 'string', default = ''), \n"
+    def make_swagger_property(attribute):
+        return " *     @SWG\Property(property = " + attribute[0] + ",          type =" + attribute[1] + ", default = ''), \n"

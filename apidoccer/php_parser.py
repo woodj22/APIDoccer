@@ -31,4 +31,4 @@ class PHPTransformerParser:
 
     @staticmethod
     def map_casts_to_values(transformer_map, cast_map):
-        return [[key, cast_map[key]] if key in cast_map.keys() else [key, 'string'] for key in transformer_map]
+        return [[key, cast_map[key]] if key in cast_map.keys() else [key, "'string'"] for key in transformer_map]
