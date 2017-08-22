@@ -2,9 +2,12 @@ from string import Template
 from pkg_resources import resource_string
 from .php_parser import PHPTransformerParser
 
+
 class Swagger:
     def __init__(self, path, model_name):
         self.model_name = model_name
+        self.parser = PHPTransformerParser()
+
         self.content = self.get_content_from_transformer(path)
 
     @classmethod
@@ -15,28 +18,33 @@ class Swagger:
 
     def map_casts_to_model_attributes(self):
 
-        parser = PHPTransformerParser()
-        map_array = parser.get_transformer_array(self.content, "public $map", False)
-        casts_array = parser.get_transformer_array(self.content,  "public $casts", True)
+        map_array = self.parser.get_transformer_array(self.content, "public $map", False)
+        casts_array = self.parser.get_transformer_array(self.content,  "public $casts", True)
 
-        return parser.map_casts_to_values(map_array, casts_array)
-
+        return self.parser.map_casts_to_values(map_array, casts_array)
 
     def create_swagger_definition(self):
-        swagger_template = resource_string(__name__, 'data/swagger_definition.txt')
-        src = Template(swagger_template)
-        casted_attributes = self.map_casts_to_model_attributes()
-        swagger_properties = self.map_swagger_properties(casted_attributes)
 
+        resource = resource_string(__name__, 'data/swagger_definition.txt')
+        swagger_template = Template(resource)
+        casted_attributes = self.map_casts_to_model_attributes()
+        swagger_properties = self.create_swagger_properties(casted_attributes)
+        includes = self.create_available_includes()
         details = {
             'modelName': self.model_name,
             'modelPluralName': 'people',
-            'properties': ''.join(swagger_properties)
+            'properties': ''.join(swagger_properties),
+            'availableIncludes': ''.join(includes)
         }
 
-        return src.substitute(details)
+        return swagger_template.substitute(details)
 
-    def map_swagger_properties(self, casted_attributes):
+    def create_available_includes(self):
+        available_includes = self.parser.get_transformer_array(self.content, "protected $availableIncludes", False)
+
+        return [self.make_swagger_include_property(include) for include in available_includes]
+
+    def create_swagger_properties(self, casted_attributes):
 
         return [self.make_swagger_property(attribute) for attribute in casted_attributes]
 
@@ -47,8 +55,9 @@ class Swagger:
         else:
             return [key.split(delimiter)[0] for key in array]
 
-
-
     @staticmethod
     def make_swagger_property(attribute):
         return " *     @SWG\Property(property = " + attribute[0] + ",          type =" + attribute[1] + ", default = ''), \n"
+
+    def make_swagger_include_property(self, reference_name):
+        return " *     @SWG\Property(property = " + reference_name + ", type = 'array',@SWG\Items(ref='#/definitions/"+reference_name+"'),),\n"

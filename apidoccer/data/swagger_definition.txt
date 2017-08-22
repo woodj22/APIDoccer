@@ -4,7 +4,7 @@
 /**
  * @SWG\Definition(
  *     definition = "$modelName:properties",
-        $properties
+$properties
  *)
  * @SWG\Definition(
  *     definition = "$modelName:id",
@@ -21,6 +21,7 @@
  *         @SWG\Schema(ref = "#/definitions/$modelName:id"),
  *         @SWG\Schema(ref = "#/definitions/$modelName:properties"),
  *     },
+$availableIncludes
  *
  * )
  *
