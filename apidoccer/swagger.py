@@ -1,25 +1,25 @@
 from string import Template
 from pkg_resources import resource_string
-
+from .php_parser import PHPTransformerParser
 
 class Swagger:
     def __init__(self, path, model_name):
-        self.transformerFilePath = path
         self.model_name = model_name
-        self.content = self.get_content_from_transformer()
+        self.content = self.get_content_from_transformer(path)
 
-    def get_content_from_transformer(self):
-        with open(self.transformerFilePath) as f:
+    @classmethod
+    def get_content_from_transformer(cls, path):
+        with open(path) as f:
             lines = f.readlines()
         return [x.strip().strip(',') for x in lines]
 
     def map_model_attributes(self):
-        map_array = "public $map"
-        i = self.get_transformer_array(self.content, map_array)
-        cast_array = "public $casts"
-        casts = self.get_transformer_array(self.content, cast_array)
-        d = self.map_to_casts(self.split_transform_array(i, keep_values=False), self.split_transform_array(casts))
-        return self.map_to_swagger_property(self.content[i[0]:i[1]])
+
+        parser = PHPTransformerParser()
+        map_array = parser.get_transformer_array(self.content, "public $map", False)
+        casts_array = parser.get_transformer_array(self.content,  "public $casts", True)
+
+        return parser.map_casts_to_values(map_array, casts_array)
 
     def get_transformer_array(self, transformer, array_name):
         found_start = False
@@ -52,9 +52,6 @@ class Swagger:
 
         return [self.make_property(name) for name in transformer_array]
 
-    def map_to_casts(self, transformer_map, cast_map):
-
-        return [[key, cast_map[key]] if key in cast_map.keys() else [key, 'string'] for key in transformer_map]
 
 
     @staticmethod
