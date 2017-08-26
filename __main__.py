@@ -8,5 +8,5 @@ if __name__ == "__main__":
         'model_name': "Person",
         'plural_model_name': "People"
                   }
-    swagger = Swagger(path, **attributes).create_swagger_definition()
+    swagger = Swagger(**attributes).create_swagger_definition(path)
     print(swagger)

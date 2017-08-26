@@ -32,3 +32,10 @@ class PHPTransformerParser:
     @staticmethod
     def map_casts_to_values(transformer_map, cast_map):
         return [[key, cast_map[key]] if key in cast_map.keys() else [key, "'string'"] for key in transformer_map]
+
+    def map_casts_to_model_attributes(self, transformer_string):
+
+        map_array = self.get_transformer_array(transformer_string, "public $map", False)
+        casts_array = self.get_transformer_array(transformer_string, "public $casts", True)
+
+        return self.map_casts_to_values(map_array, casts_array)

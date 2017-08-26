@@ -3,30 +3,17 @@ from pkg_resources import resource_string
 from .php_parser import PHPTransformerParser
 
 
-class Swagger:
-    def __init__(self, transformer_path, **definition):
-
+class Swagger(PHPTransformerParser):
+    def __init__(self, **definition):
         self.model_name = definition.get('model_name')
         self.plural_model_name = definition.get('plural_model_name')
-        self.parser = PHPTransformerParser()
-        self.content = self.get_content_from_transformer(transformer_path)
 
     @classmethod
-    def get_content_from_transformer(cls, path):
+    def map_transformer_to_array(cls, path):
         with open(path) as f:
             lines = f.readlines()
         return [x.strip().strip(',') for x in lines]
 
-    # def set_swagger_details(self, detail_input):
-    #    return self.details = detail_input
-    #
-
-    def map_casts_to_model_attributes(self):
-
-        map_array = self.parser.get_transformer_array(self.content, "public $map", False)
-        casts_array = self.parser.get_transformer_array(self.content,  "public $casts", True)
-
-        return self.parser.map_casts_to_values(map_array, casts_array)
 
     @staticmethod
     def add_values_to_template(resource_name, substitute_values):
@@ -35,11 +22,10 @@ class Swagger:
 
         return swagger_template.substitute(substitute_values)
 
-    def create_swagger_definition(self):
-
-        casted_attributes = self.map_casts_to_model_attributes()
-        swagger_properties = self.create_swagger_properties(casted_attributes)
-        includes = self.create_available_includes()
+    def create_swagger_definition(self, transformer_path):
+        transformer_string = self.map_transformer_to_array(transformer_path)
+        swagger_properties = self.create_swagger_properties(self.map_casts_to_model_attributes(transformer_string))
+        includes = self.create_available_includes(transformer_string)
         details = {
             'modelName': self.model_name,
             'modelPluralName': self.plural_model_name,
@@ -49,8 +35,8 @@ class Swagger:
 
         return self.add_values_to_template('data/swagger_definition.txt', details)
 
-    def create_available_includes(self):
-        available_includes = self.parser.get_transformer_array(self.content, "protected $availableIncludes", False)
+    def create_available_includes(self, transformer_string):
+        available_includes = self.get_transformer_array(transformer_string, "protected $availableIncludes", False)
 
         return [self.make_swagger_include_property(include) for include in available_includes]
 
